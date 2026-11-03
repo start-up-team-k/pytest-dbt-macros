@@ -17,7 +17,7 @@ The same approach is used by [SQLFluff's Jinja templater](https://docs.sqlfluff.
 
 ## Install
 
-PyPI is not published yet. Python >= 3.10.
+PyPI is not published yet. Python >= 3.10. Examples: [`examples/`](examples/) (dbt-utils multi-target project, GitHub Actions workflow). Docs page: https://start-up-team-k.github.io/pytest-dbt-macros/ .
 
 ```bash
 python -m venv .venv && . .venv/bin/activate

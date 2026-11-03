@@ -1,0 +1,16 @@
+# Copy to .github/workflows/test-macros.yml in your dbt repo.
+# Runs only your macro tests: no dbt-core, no adapter, no warehouse credentials.
+name: test-macros
+on: [push, pull_request]
+jobs:
+  macros:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pytest git+https://github.com/start-up-team-k/pytest-dbt-macros
+      # Only needed if your macros call a package. Cloning a tag avoids installing dbt-core for `dbt deps`.
+      - run: git clone --depth 1 --branch 1.4.1 https://github.com/dbt-labs/dbt-utils dbt_packages/dbt_utils
+      - run: pytest -v tests_macros   # run from the folder with dbt_project.yml

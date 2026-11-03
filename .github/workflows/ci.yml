@@ -17,3 +17,14 @@ jobs:
       - run: pytest -v
       - name: dbt still not imported after the tests
         run: pip list | grep -i -E "^dbt" && exit 1 || echo "no dbt packages installed"
+  examples:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e . pytest
+      - run: git clone --depth 1 --branch 1.4.1 https://github.com/dbt-labs/dbt-utils examples/dbt_utils_multi_target/dbt_packages/dbt_utils
+      - run: pytest -v
+        working-directory: examples/dbt_utils_multi_target

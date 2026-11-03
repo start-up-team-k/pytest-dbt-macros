@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pytest-dbt-macros: unit test dbt macros with pytest, no warehouse</title>
+<meta name="description" content="Unit test dbt macros with pytest, no warehouse, no dbt-core, no profiles.yml. Render dbt-utils and project macros per target.type and compare SQL. Open source, MIT.">
+<style>body{font:16px/1.55 system-ui,sans-serif;max-width:46rem;margin:2rem auto;padding:0 1rem;color:#222}pre{background:#f4f4f4;padding:.8rem;overflow:auto}code{background:#f4f4f4}pre code{background:none}table{border-collapse:collapse}td,th{border:1px solid #ccc;padding:.3rem .5rem}</style>
+</head>
+<body>
+<h1>pytest-dbt-macros</h1>
+<p>Unit test dbt macros (Jinja) with pytest, <strong>no warehouse</strong>, and without dbt-core, an adapter or <code>profiles.yml</code>.</p>
+<p><em>This is an open-source experiment built by AI agents at start-up-team-k. Expect rough edges; issues and feedback are welcome.</em></p>
+<p><a href="https://github.com/start-up-team-k/pytest-dbt-macros">GitHub</a> ·
+<a href="https://github.com/start-up-team-k/pytest-dbt-macros/discussions">Discussions: show us your macros</a> ·
+<a href="https://github.com/start-up-team-k/pytest-dbt-macros/issues">Issues</a> ·
+<a href="https://github.com/start-up-team-k/pytest-dbt-macros/blob/main/CHANGELOG.md">Changelog</a></p>
+
+<h2>Why</h2>
+<p>Shared dbt macros branch per warehouse (<code>adapter.dispatch</code>) and are hard to test. dbt's built-in unit tests cover models, not macros
+(<a href="https://github.com/dbt-labs/dbt/issues/10547">dbt-labs/dbt#10547</a>). This plugin re-implements the small part of dbt's Jinja context that macros
+need (<code>ref</code>, <code>var</code>, <code>target</code>, <code>adapter.dispatch</code>, ...), so a test is: load macros, call, compare SQL strings.
+Output is checked against real <code>dbt compile</code> for 17 cases on postgres, snowflake, bigquery and duckdb (dbt-core 1.12.6, dbt-utils 1.4.1).</p>
+
+<h2>Install</h2>
+<p>PyPI is not published yet. Python 3.10+.</p>
+<pre><code>python -m venv .venv &amp;&amp; . .venv/bin/activate
+pip install pytest git+https://github.com/start-up-team-k/pytest-dbt-macros</code></pre>
+
+<h2>Quick start</h2>
+<p>Run pytest from the folder that has <code>dbt_project.yml</code>. Packages in <code>dbt_packages/</code> and dbt's own cross-database macros are loaded.</p>
+<pre><code>import pytest
+from pytest_dbt_macros import CompilationError, assert_sql_equal
+
+def test_bigquery_branch(dbt_macros):
+    dbt_macros.target["type"] = "bigquery"   # what target.type returns inside the macros
+    assert_sql_equal(dbt_macros.cents_to_dollars("amount"), "safe_divide(amount, 100)")
+
+def test_dbt_utils(dbt_macros):
+    dbt_macros.target["type"] = "postgres"
+    assert "md5(" in dbt_macros.dbt_utils.generate_surrogate_key(["a", "b"])</code></pre>
+<p>Full walkthrough and examples:
+<a href="https://github.com/start-up-team-k/pytest-dbt-macros#quick-start">README</a>,
+<a href="https://github.com/start-up-team-k/pytest-dbt-macros/tree/main/examples">examples/</a> (dbt-utils multi-target project, GitHub Actions workflow).</p>
+
+<h2>GitHub Actions: run only macro tests</h2>
+<pre><code>- uses: actions/setup-python@v5
+  with: {python-version: "3.12"}
+- run: pip install pytest git+https://github.com/start-up-team-k/pytest-dbt-macros
+- run: git clone --depth 1 --branch 1.4.1 https://github.com/dbt-labs/dbt-utils dbt_packages/dbt_utils
+- run: pytest -v</code></pre>
+
+<h2>Scope and limitations</h2>
+<ul>
+<li>Does: render project and package macros, switch <code>target.type</code> per test, declare relation columns, assert errors.</li>
+<li>Does not: run SQL, <code>run_query</code>/<code>statement</code>/<code>date_spine</code>, models, materializations, dbt Fusion.</li>
+<li>It is a re-implementation of dbt's Jinja context, not dbt: relations render unquoted, no <code>this</code>/<code>model</code>/<code>graph</code>, simplified <code>var()</code>.</li>
+<li>Bundled dbt macros cover postgres, snowflake, bigquery, duckdb; other adapters fall back to <code>default__</code>.</li>
+</ul>
+<p>Where does it break for you? Open an issue or a discussion with the macro.</p>
+<p>License: MIT. Bundled dbt macros are Apache-2.0 (see NOTICE).</p>
+</body>
+</html>

@@ -11,10 +11,23 @@ license = "MIT"
 license-files = ["LICENSE", "NOTICE"]
 requires-python = ">=3.10"
 dependencies = ["jinja2>=3.1", "pyyaml>=6", "pytest>=7", "sqlglot>=25"]
-classifiers = ["Framework :: Pytest", "Topic :: Software Development :: Testing"]
+keywords = ["dbt", "dbt-macros", "pytest", "pytest-plugin", "jinja", "unit-testing", "analytics-engineering", "sql"]
+classifiers = [
+  "Framework :: Pytest",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Testing",
+]
 
 [project.urls]
-Homepage = "https://github.com/start-up-team-k/pytest-dbt-macros"
+Homepage = "https://start-up-team-k.github.io/pytest-dbt-macros/"
+Repository = "https://github.com/start-up-team-k/pytest-dbt-macros"
+Issues = "https://github.com/start-up-team-k/pytest-dbt-macros/issues"
+Changelog = "https://github.com/start-up-team-k/pytest-dbt-macros/blob/main/CHANGELOG.md"
 
 [project.entry-points.pytest11]
 dbt_macros = "pytest_dbt_macros.plugin"
