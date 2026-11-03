@@ -60,8 +60,8 @@ def test_var_and_env_var(dbt_macros):
 def test_database_features_fail_loudly(dbt_macros):
     with pytest.raises(CompilationError, match="needs a database"):
         dbt_macros.render("{{ run_query('select 1') }}")
-    with pytest.raises(CompilationError, match="adapter.get_columns_in_relation"):
-        dbt_macros.render("{{ adapter.get_columns_in_relation(ref('m')) }}")
+    with pytest.raises(CompilationError, match="adapter.get_relation"):
+        dbt_macros.render("{{ adapter.get_relation('a', 'b', 'c') }}")
 
 
 def test_does_not_import_dbt(dbt_macros):

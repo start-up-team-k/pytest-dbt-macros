@@ -1,0 +1,38 @@
+unit_tests:
+  - name: surrogate_key
+    model: m_key
+    given:
+      - input: ref('raw')
+        rows: [{order_id: 1, customer_id: a}]
+    expect:
+      rows: [{k: fd863b01647cb662580dd67b9839d8de}]
+  - name: deduplicate
+    model: m_dedup
+    given:
+      - input: ref('raw_dedup')
+        rows:
+          - {order_id: 1, updated_at: "2026-01-01 00:00:00"}
+          - {order_id: 1, updated_at: "2026-02-01 00:00:00"}
+    expect:
+      rows: [{order_id: 1, updated_at: "2026-02-01 00:00:00"}]
+  - name: dateadd
+    model: m_dateadd
+    given:
+      - input: ref('raw')
+        rows: [{order_id: 1, order_date: "2026-01-01 00:00:00"}]
+    expect:
+      rows: [{d: "2026-01-08"}]
+  - name: datediff
+    model: m_datediff
+    given:
+      - input: ref('raw')
+        rows: [{order_id: 1, start_ts: "2026-01-01 00:00:00", end_ts: "2026-01-01 05:00:00"}]
+    expect:
+      rows: [{h: 5}]
+  - name: haversine
+    model: m_haversine
+    given:
+      - input: ref('raw')
+        rows: [{order_id: 1, lat1: 33.9416, lon1: -118.4085, lat2: 40.6413, lon2: -73.7781}]
+    expect:
+      rows: [{miles: 2470.9}]

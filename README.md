@@ -112,19 +112,48 @@ folders (plus `timestamps.sql`) of dbt-adapters 1.24.5, dbt-postgres 1.11.0, dbt
 and dbt-duckdb 1.11.1 (all Apache-2.0) in `src/pytest_dbt_macros/vendored/`. Each folder keeps its upstream LICENSE;
 see `NOTICE`. Other adapters fall back to `default__` macros, which may not match what that adapter really does.
 
+## Comparison
+
+The same five checks (`dbt_utils.generate_surrogate_key`, `dbt_utils.deduplicate`, `dbt_utils.haversine_distance`,
+`dbt.dateadd`, `dbt.datediff`; dbt-utils 1.4.1, `target.type` = duckdb) written three ways. Everything is in
+[`bench/`](bench/) and reproduced by [`bench/run.sh`](bench/run.sh) (needs `uv` and network, no database server).
+Measured 2026-11-03 on macOS (Darwin 25.6.0), Apple M4, Python 3.12, fresh uv venvs, dbt-core 1.12.6, dbt-duckdb 1.11.1.
+
+| | (a) pytest-dbt-macros | (b) pytest-dbt-core 0.2.4 + dbt-duckdb | (c) dbt unit tests (dummy models) + dbt-duckdb |
+|---|---|---|---|
+| Packages installed (`uv pip freeze` lines) | 12 | 64 | 59 |
+| `site-packages` size | 17.9 MB | 166.0 MB | 157.4 MB |
+| Config files you write | 1 (`dbt_project.yml`) | 3 (`dbt_project.yml`, `profiles.yml`, `packages.yml`) | 4 (same three + `unit_tests.yml`), plus 7 dummy model `.sql` files |
+| Test code lines | 38 | 42 | 51 (38 YAML + 13 SQL) |
+| Wall time, mean of 3 runs (whole process) | 0.214 s | 1.149 s | 2.395 s |
+| Several `target.type` in one run | yes: `dbt_macros.target["type"] = ...` per test (3 targets in `bench/a_pytest_dbt_macros/test_multi_target.py`) | no: one `--dbt-target` per pytest process; each non-DuckDB type needs its adapter package and a profile it can connect with | no: one `--target` per `dbt build`; same adapter requirement |
+| What is checked | rendered SQL string | rendered SQL string | result of executing the SQL on DuckDB |
+
+Notes (facts only):
+- (b) works with the latest dbt-core (1.12.6) and Python 3.12; 5/5 pass. It needs `--profiles-dir` (without it
+  pytest-dbt-core 0.2.4 raises `TypeError: expected str, bytes or os.PathLike object, not NoneType`), and it does not
+  install `pytest` itself. Its last release is 2024-06-04.
+- The dbt-based setups need `dbt deps` once (not timed). (c) also builds the dummy views in a DuckDB file on each run.
+- Times include interpreter start-up and imports; the first (untimed) run per setup warms bytecode caches.
+  (a)/(b) timings run only the five-check file; (c) runs `dbt build` (7 views + 5 unit tests).
+- (b)/(c) were not tried on non-DuckDB adapters: their fixtures/commands open a connection to the warehouse.
+- Compare with real warehouses: only (c) runs SQL; (a) and (b) compare strings. Raw numbers: `bench/run.sh` output.
+
 ## Scope
 
 Does:
 - Render macros from your project and from installed packages to SQL strings, call them from Python.
 - Stubs: `ref`, `source`, `var`, `env_var`, `target`, `config`, `log`, `return`, `exceptions.*`, `adapter.dispatch/type/quote`,
   `api.Column.translate_type/numeric_type`, `modules`, `execute`, `dbt_version`.
+- Declare a relation's columns, e.g. `dbt_macros.columns["users"] = ["id", "name"]`; then `ref('users')` works with
+  `adapter.get_columns_in_relation` and `dbt_utils.star(ref('users'))` renders (checked against `dbt compile` output on DuckDB
+  in `tests/test_star.py`). Names only: no column types.
 - Check cross-database branches by switching `target.type`; assert expected errors with `pytest.raises(CompilationError)`.
 
 Does not (yet):
 - Run the SQL: no DuckDB execution of rendered SQL (planned, not implemented).
-- Anything that needs a database: `run_query`, `statement`, `adapter.get_columns_in_relation` (so `dbt_utils.star`,
-  `get_column_values`, `date_spine`, `union_relations` fail with an error; for `star` and `union_relations` the message
-  is a misleading "expected a Relation", because `ref()` returns a plain string, not a dbt Relation object).
+- Anything that needs a database: `run_query`, `statement`, `get_column_values`, `date_spine`. `union_relations` also
+  fails (needs column types). Columns can be declared by hand for `adapter.get_columns_in_relation` (see below).
 - Models, materializations, hooks, `{% test %}` blocks (parsed and ignored), snapshots, docs blocks.
 - Quoted, fully-qualified relations: `ref('x')` renders as `x`, `source('s', 't')` as `s.t`.
 - dbt Fusion.

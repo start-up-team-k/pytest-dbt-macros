@@ -1,0 +1,4 @@
+name: bench_b
+version: "0.0.1"
+config-version: 2
+profile: bench_b

@@ -1,4 +1,5 @@
 """Render dbt macros with plain Jinja: no dbt-core, no adapter, no profiles.yml, no database."""
+import collections.abc
 import datetime
 import functools
 import itertools
@@ -64,7 +65,14 @@ class Relation(str):
     def __new__(cls, identifier, schema=None, database=None):
         self = super().__new__(cls, identifier)
         self.identifier, self.schema, self.database = identifier, schema, database
+        self.is_cte = False
         return self
+
+    def get(self, key, default=None):  # dbt-utils' _is_relation() wants a mapping with metadata.type
+        return {"metadata": {"type": "Relation"}}.get(key, default)
+
+
+collections.abc.Mapping.register(Relation)
 
 
 class _Namespace:
@@ -91,6 +99,12 @@ class _Adapter:
     def quote(self, identifier):
         q = "`" if self.type() == "bigquery" else '"'
         return f"{q}{identifier}{q}"
+
+    def get_columns_in_relation(self, relation):
+        cols = self._p.columns
+        if relation.identifier not in cols:
+            raise CompilationError(f"no columns declared for '{relation.identifier}'; set dbt_macros.columns['{relation.identifier}'] = [...]")
+        return [SimpleNamespace(column=c, name=c) for c in cols[relation.identifier]]
 
     def __getattr__(self, name):
         raise CompilationError(f"adapter.{name} needs a database connection; pytest-dbt-macros has none")
@@ -148,6 +162,7 @@ class MacroProject:
         self.target = {"type": target, "name": "test", "schema": "public", "database": "db", "threads": 1}
         self.env = dict(env or {})  # overrides os.environ for env_var()
         self.parents = {"redshift": ["postgres"]}  # adapter -> parent adapters for dispatch
+        self.columns = {}  # relation name -> column names, what adapter.get_columns_in_relation() returns
         self.logs = []  # messages from log() / exceptions.warn()
         self._macros = {}  # package -> {macro name: [(path, name, text), jinja macro once loaded]}
         self._ctx_cache = {}
@@ -223,7 +238,7 @@ class MacroProject:
         return dict(
             var=var, env_var=env_var, ref=ref, source=source, log=log, exceptions=exceptions,
             **{n: needs_db(n) for n in ('run_query', 'statement', 'load_result')},
-            target=self.target, config=_Config(), execute=True, api=SimpleNamespace(Column=self._column_api()),
+            target=self.target, flags=SimpleNamespace(WHICH="compile"), config=_Config(), execute=True, api=SimpleNamespace(Column=self._column_api()),
             dbt_version="1.12.6",  # the version the baselines were compiled with
             modules=SimpleNamespace(datetime=datetime, re=re, itertools=itertools),
             **{"return": return_},

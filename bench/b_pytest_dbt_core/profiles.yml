@@ -1,0 +1,5 @@
+bench_b:
+  target: duckdb
+  outputs:
+    duckdb: {type: duckdb, path: ":memory:"}
+    duckdb2: {type: duckdb, path: ":memory:", schema: other}

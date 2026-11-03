@@ -1,0 +1,5 @@
+name: bench_c
+version: "0.0.1"
+config-version: 2
+profile: bench_c
+model-paths: ["models"]

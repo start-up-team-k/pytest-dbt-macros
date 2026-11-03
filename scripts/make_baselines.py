@@ -86,12 +86,40 @@ def compile_target(target, cases, work):
         shutil.copy(proj / "target/compiled/cedar_fixture/models" / f"{name}.sql", out / f"{name}.sql")
 
 
+STAR_CASES = {  # need a real table: only DuckDB (a local file) can be created without a server
+    "star_all": "{{ dbt_utils.star(ref('users')) }}",
+    "star_except_prefix": "{{ dbt_utils.star(ref('users'), except=['email'], prefix='u_') }}",
+}
+
+
+def star_baselines(work):
+    """`dbt run` creates table `users` (id, name, email) in a temp DuckDB file, then `dbt compile` renders star()."""
+    proj = work / "star"
+    shutil.copytree(FIXTURE, proj)
+    (proj / "models").mkdir()
+    (proj / "models/users.sql").write_text("select 1 as id, 'x' as name, 'y' as email")
+    for name, expr in STAR_CASES.items():
+        (proj / "models" / f"{name}.sql").write_text(expr)
+    out = {"type": "duckdb", "threads": 1, "path": str(work / "star.duckdb")}
+    (work / "profiles.yml").write_text(json.dumps({"cedar_fixture": {"target": "d", "outputs": {"d": out}}}))
+    for cmd, extra in (("run", ["--select", "users"]), ("compile", [])):
+        subprocess.run([sys.executable, "-m", "dbt.cli.main", cmd, "--project-dir", str(proj),
+                        "--profiles-dir", str(work), *extra], check=True)
+    dest = ROOT / "tests/baselines_star"
+    shutil.rmtree(dest, ignore_errors=True)
+    dest.mkdir()
+    for name in STAR_CASES:
+        shutil.copy(proj / "target/compiled/cedar_fixture/models" / f"{name}.sql", dest / f"{name}.sql")
+
+
 if __name__ == "__main__":
     vendor()
     cases = json.loads((BASE / "cases.json").read_text())
     with tempfile.TemporaryDirectory() as tmp:
         for t in PROFILES:
             compile_target(t, cases, Path(tmp))
+        (Path(tmp) / "s").mkdir()
+        star_baselines(Path(tmp) / "s")
     dists = ["dbt-core", "dbt-adapters", "dbt-postgres", "dbt-snowflake", "dbt-bigquery", "dbt-duckdb"]
     lines = [f"{d}=={metadata.version(d)}" for d in dists]
     lines.append("dbt-utils==1.4.1 (git tag 1.4.1, copied to tests/fixtures/project/dbt_packages/dbt_utils)")
