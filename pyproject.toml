@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pytest-dbt-macros"
-version = "0.2.0"
+version = "0.2.1"
 description = "Unit-test dbt macros (Jinja) with pytest, without dbt-core, an adapter, profiles.yml or a database."
 readme = "README.md"
 license = "MIT"

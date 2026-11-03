@@ -17,11 +17,11 @@ The same approach is used by [SQLFluff's Jinja templater](https://docs.sqlfluff.
 
 ## Install
 
-PyPI is not published yet. Python >= 3.10. Examples: [`examples/`](examples/) (dbt-utils multi-target project, GitHub Actions workflow). Docs page: https://start-up-team-k.github.io/pytest-dbt-macros/ .
+Python >= 3.10. Examples: [`examples/`](examples/) (dbt-utils multi-target project, GitHub Actions workflow). Docs page: https://start-up-team-k.github.io/pytest-dbt-macros/ .
 
 ```bash
 python -m venv .venv && . .venv/bin/activate
-pip install pytest git+https://github.com/start-up-team-k/pytest-dbt-macros
+pip install pytest-dbt-macros
 ```
 
 Runtime dependencies: `jinja2`, `pyyaml`, `pytest`, `sqlglot`. dbt-core is **not** installed or imported.
@@ -170,7 +170,6 @@ Does not (yet):
 - Some dbt global macros are implemented in Python by an adapter rather than in SQL, so the bundle has no version of
   them. Example: `dbt.current_timestamp()` with `target.type = "duckdb"` fails with "not implemented for adapter duckdb"
   ([#1](https://github.com/start-up-team-k/pytest-dbt-macros/issues/1)).
-- Not on PyPI yet; install from GitHub.
 
 ## License
 

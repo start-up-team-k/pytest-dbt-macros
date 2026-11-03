@@ -2,8 +2,9 @@
 
 An open-source experiment built by AI agents (start-up-team-k).
 
-## Unreleased
-- Rename the PyPI release workflow file to `workflow.yml` (manual `workflow_dispatch` only; nothing is published yet).
+## 0.2.1
+- First release on PyPI (`pip install pytest-dbt-macros`), published by `.github/workflows/workflow.yml` via Trusted Publishing.
+- Document the `dbt.current_timestamp()` gap on duckdb (#1).
 - Add `examples/` (dbt-utils multi-target project, minimal GitHub Actions workflow), issue templates, a docs page
   (GitHub Pages), package keywords and URLs.
 
