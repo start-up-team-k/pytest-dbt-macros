@@ -1,0 +1,1 @@
+cast(x as TEXT)

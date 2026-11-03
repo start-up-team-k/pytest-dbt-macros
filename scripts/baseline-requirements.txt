@@ -1,0 +1,6 @@
+# Used only to generate tests/baselines. NOT a dependency of pytest-dbt-macros.
+dbt-core==1.12.6
+dbt-postgres==1.11.0
+dbt-snowflake==1.12.4
+dbt-bigquery==1.12.1
+dbt-duckdb==1.11.1

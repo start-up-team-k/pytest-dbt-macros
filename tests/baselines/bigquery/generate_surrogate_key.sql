@@ -1,0 +1,1 @@
+to_hex(md5(cast(coalesce(cast(order_id as string), '_dbt_utils_surrogate_key_null_') || '-' || coalesce(cast(customer_id as string), '_dbt_utils_surrogate_key_null_') as string)))

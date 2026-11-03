@@ -1,0 +1,7 @@
+dbt-core==1.12.6
+dbt-adapters==1.24.5
+dbt-postgres==1.11.0
+dbt-snowflake==1.12.4
+dbt-bigquery==1.12.1
+dbt-duckdb==1.11.1
+dbt-utils==1.4.1 (git tag 1.4.1, copied to tests/fixtures/project/dbt_packages/dbt_utils)

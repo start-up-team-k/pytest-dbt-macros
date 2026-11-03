@@ -1,0 +1,7 @@
+{
+  "global_project": "dbt-adapters==1.24.5",
+  "postgres": "dbt-postgres==1.11.0",
+  "snowflake": "dbt-snowflake==1.12.4",
+  "bigquery": "dbt-bigquery==1.12.1",
+  "duckdb": "dbt-duckdb==1.11.1"
+}

@@ -1,0 +1,1 @@
+safe_cast(x as string)

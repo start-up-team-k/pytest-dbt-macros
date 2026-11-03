@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pytest-dbt-macros"
+version = "0.1.0"
+description = "Unit-test dbt macros (Jinja) with pytest, without dbt-core, an adapter, profiles.yml or a database."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE", "NOTICE"]
+requires-python = ">=3.10"
+dependencies = ["jinja2>=3.1", "pyyaml>=6", "pytest>=7", "sqlglot>=25"]
+classifiers = ["Framework :: Pytest", "Topic :: Software Development :: Testing"]
+
+[project.urls]
+Homepage = "https://github.com/start-up-team-k/pytest-dbt-macros"
+
+[project.entry-points.pytest11]
+dbt_macros = "pytest_dbt_macros.plugin"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pytest_dbt_macros"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src", "tests", "scripts", "LICENSE", "NOTICE", "README.md", "CONTRIBUTING.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

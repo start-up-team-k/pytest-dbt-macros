@@ -1,0 +1,19 @@
+{
+  "generate_surrogate_key": "{{ dbt_utils.generate_surrogate_key(['order_id', 'customer_id']) }}",
+  "safe_add": "{{ dbt_utils.safe_add(['a', 'b', 'c']) }}",
+  "safe_subtract": "{{ dbt_utils.safe_subtract(['a', 'b']) }}",
+  "safe_divide_overridden": "{{ dbt_utils.safe_divide('a', 'b') }}",
+  "deduplicate": "{{ dbt_utils.deduplicate('my_table', 'user_id', 'updated_at desc') }}",
+  "haversine_distance": "{{ dbt_utils.haversine_distance('lat1', 'lon1', 'lat2', 'lon2') }}",
+  "width_bucket": "{{ dbt_utils.width_bucket('amount', 0, 100, 10) }}",
+  "get_url_host": "{{ dbt_utils.get_url_host('url') }}",
+  "get_url_parameter": "{{ dbt_utils.get_url_parameter('url', 'utm_source') }}",
+  "pivot": "{{ dbt_utils.pivot('color', ['red', 'blue']) }}",
+  "dateadd": "{{ dbt.dateadd('day', 7, 'order_date') }}",
+  "datediff": "{{ dbt.datediff('start_ts', 'end_ts', 'hour') }}",
+  "concat": "{{ dbt.concat(['a', 'b', \"'-'\"]) }}",
+  "type_string": "{{ dbt.type_string() }}",
+  "project_to_text": "{{ cedar_fixture.to_text('x') }}",
+  "project_var": "{{ tz_expr('created_at') }}",
+  "generate_series": "{{ dbt_utils.generate_series(5) }}"
+}

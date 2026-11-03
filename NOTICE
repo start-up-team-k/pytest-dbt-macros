@@ -1,0 +1,28 @@
+pytest-dbt-macros
+Copyright (c) 2026 start-up-team-k contributors, MIT License (see LICENSE).
+
+This product includes third-party files licensed under the Apache License 2.0.
+Each directory below carries its upstream LICENSE file next to the files. The files are
+unmodified copies of the `macros/utils/` directories (plus `timestamps.sql`) taken from the
+published packages listed here (exact versions: src/pytest_dbt_macros/vendored/SOURCES.json).
+They are used as dbt's built-in "dbt" macro namespace (dbt.concat, dbt.hash, dbt.dateadd, ...).
+Regenerate with scripts/make_baselines.sh.
+
+  src/pytest_dbt_macros/vendored/global_project/  dbt-adapters 1.24.5   Copyright dbt Labs, Inc.
+      https://github.com/dbt-labs/dbt-adapters
+  src/pytest_dbt_macros/vendored/postgres/        dbt-postgres 1.11.0   Copyright dbt Labs, Inc.
+      https://github.com/dbt-labs/dbt-postgres
+  src/pytest_dbt_macros/vendored/snowflake/       dbt-snowflake 1.12.4  Copyright dbt Labs, Inc.
+      https://github.com/dbt-labs/dbt-adapters
+  src/pytest_dbt_macros/vendored/bigquery/        dbt-bigquery 1.12.1   Copyright dbt Labs, Inc.
+      https://github.com/dbt-labs/dbt-adapters
+  src/pytest_dbt_macros/vendored/duckdb/          dbt-duckdb 1.11.1     Apache-2.0, see its LICENSE
+      https://github.com/duckdb/dbt-duckdb
+
+Test fixture (not part of the installed package):
+  tests/fixtures/project/dbt_packages/dbt_utils/  dbt-utils 1.4.1, Copyright dbt Labs, Inc., Apache-2.0
+      https://github.com/dbt-labs/dbt-utils  (its LICENSE is in that directory)
+  tests/baselines/*/*.sql are outputs of `dbt compile` (dbt-core 1.12.6, Apache-2.0) over those macros.
+
+The design of the Jinja stubs (ref/source/var/dispatch) follows dbt-core's documented behaviour;
+no dbt-core source code is copied.

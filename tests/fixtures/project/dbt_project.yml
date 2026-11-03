@@ -1,0 +1,10 @@
+name: cedar_fixture
+version: "0.0.1"
+config-version: 2
+profile: cedar_fixture
+macro-paths: ["macros"]
+vars:
+  tz: UTC
+dispatch:
+  - macro_namespace: dbt_utils
+    search_order: ["cedar_fixture", "dbt_utils"]
