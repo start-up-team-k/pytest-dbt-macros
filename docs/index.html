@@ -24,8 +24,8 @@ Output is checked against real <code>dbt compile</code> for 17 cases on postgres
 
 <h2>Install</h2>
 <p>Python 3.10+.</p>
-<pre><code>python -m venv .venv &amp;&amp; . .venv/bin/activate
-pip install pytest git+https://github.com/start-up-team-k/pytest-dbt-macros</code></pre>
+<pre><code>python3 -m venv .venv &amp;&amp; . .venv/bin/activate
+pip install pytest-dbt-macros</code></pre>
 
 <h2>Quick start</h2>
 <p>Run pytest from the folder that has <code>dbt_project.yml</code>. Packages in <code>dbt_packages/</code> and dbt's own cross-database macros are loaded.</p>
@@ -46,7 +46,7 @@ def test_dbt_utils(dbt_macros):
 <h2>GitHub Actions: run only macro tests</h2>
 <pre><code>- uses: actions/setup-python@v5
   with: {python-version: "3.12"}
-- run: pip install pytest git+https://github.com/start-up-team-k/pytest-dbt-macros
+- run: pip install pytest-dbt-macros
 - run: git clone --depth 1 --branch 1.4.1 https://github.com/dbt-labs/dbt-utils dbt_packages/dbt_utils
 - run: pytest -v</code></pre>
 

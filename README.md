@@ -17,11 +17,11 @@ The same approach is used by [SQLFluff's Jinja templater](https://docs.sqlfluff.
 
 ## Install
 
-Not on PyPI yet (publishing is pending); install from GitHub. Python >= 3.10. Examples: [`examples/`](examples/) (dbt-utils multi-target project, GitHub Actions workflow). Docs page: https://start-up-team-k.github.io/pytest-dbt-macros/ .
+On PyPI: https://pypi.org/project/pytest-dbt-macros/ . Python >= 3.10. Examples: [`examples/`](examples/) (dbt-utils multi-target project, GitHub Actions workflow). Docs page: https://start-up-team-k.github.io/pytest-dbt-macros/ .
 
 ```bash
-python -m venv .venv && . .venv/bin/activate
-pip install pytest git+https://github.com/start-up-team-k/pytest-dbt-macros
+python3 -m venv .venv && . .venv/bin/activate
+pip install pytest-dbt-macros
 ```
 
 Runtime dependencies: `jinja2`, `pyyaml`, `pytest`, `sqlglot`. dbt-core is **not** installed or imported.
@@ -93,7 +93,7 @@ Calling a macro returns its rendered text (or the value passed to `return(...)`)
 
 ```bash
 git clone https://github.com/start-up-team-k/pytest-dbt-macros && cd pytest-dbt-macros
-python -m venv .venv && . .venv/bin/activate
+python3 -m venv .venv && . .venv/bin/activate
 pip install -e . pytest
 pytest
 ```
