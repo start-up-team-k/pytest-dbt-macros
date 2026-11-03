@@ -1,5 +1,5 @@
 # Publishes to PyPI via Trusted Publishing. Manual only: it needs the maintainer to configure
-# a Trusted Publisher on PyPI (project pytest-dbt-macros, this repo, workflow release.yml, environment `pypi`).
+# a Trusted Publisher on PyPI (project pytest-dbt-macros, this repo, workflow workflow.yml, environment `pypi`).
 name: Release to PyPI
 on: workflow_dispatch
 jobs:
