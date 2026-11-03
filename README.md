@@ -167,6 +167,9 @@ Does not (yet):
   flags are not available; `target` has only `type`, `name`, `schema`, `database`, `threads`.
 - Baselines cover 17 cases on 4 targets compared against dbt-core 1.12.6 only. Other dbt versions or macros may differ.
 - The bundled dbt macros are pinned to the versions above and are not updated automatically.
+- Some dbt global macros are implemented in Python by an adapter rather than in SQL, so the bundle has no version of
+  them. Example: `dbt.current_timestamp()` with `target.type = "duckdb"` fails with "not implemented for adapter duckdb"
+  ([#1](https://github.com/start-up-team-k/pytest-dbt-macros/issues/1)).
 - Not on PyPI yet; install from GitHub.
 
 ## License
